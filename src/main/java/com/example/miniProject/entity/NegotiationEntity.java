@@ -5,15 +5,15 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "comment")
-public class Comment {
+@Table(name = "negotiation")
+public class NegotiationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    private SalesItem salesItem;
+    private SalesItemEntity salesItemEntity;
+    private Integer suggestedPrice;
+    private String status;
     private String writer;
     private String password;
-    private String content;
-    private String reply;
 }
