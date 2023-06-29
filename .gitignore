@@ -151,3 +151,4 @@ replay_pid*
 
 *.sql
 *.sqlite
+/media
