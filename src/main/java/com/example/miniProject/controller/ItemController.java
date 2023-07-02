@@ -38,7 +38,7 @@ public class ItemController {
     // GET /items?page=()&limit=()
     @GetMapping
     public Page<ResponseItemPageDto> searchAll(
-            @RequestParam("page") Integer page,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "limit", defaultValue = "25") Integer pageNumber
     ) {
         return service.searchAllItem(page, pageNumber);

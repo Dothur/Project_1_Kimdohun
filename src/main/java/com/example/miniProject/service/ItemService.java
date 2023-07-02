@@ -49,8 +49,8 @@ public class ItemService {
 
     // Read All
     public Page<ResponseItemPageDto> searchAllItem(Integer page, Integer limit) {
-        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), limit,
-                Sort.by("id").ascending()
+        Pageable pageable = PageRequest.of(page, limit,
+                Sort.by("id")
         );
         return repository.findAll(pageable)
                 .map(ResponseItemPageDto::fromEntity);
@@ -97,11 +97,11 @@ public class ItemService {
         // media/{userId}/profile.{파일 확장자}
 
         // 2-1. 폴더만 만드는 과정
-        String profileDir = String.format("media/%d/",id);
+        String profileDir = String.format("media/%d/", id);
         log.info(profileDir);
         try {
             Files.createDirectories(Path.of(profileDir));
-        } catch (IOException e){
+        } catch (IOException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -121,7 +121,7 @@ public class ItemService {
         // 3. MultipartFile 을 저장하기
         try {
             multipartFile.transferTo(Path.of(profilePath));
-        } catch (IOException e){
+        } catch (IOException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
