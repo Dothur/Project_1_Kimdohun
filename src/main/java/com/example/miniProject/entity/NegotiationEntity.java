@@ -10,8 +10,7 @@ public class NegotiationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private SalesItemEntity salesItemEntity;
+    private Long itemId;
     private Integer suggestedPrice;
     private String status;
     private String writer;
