@@ -10,10 +10,12 @@ public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private SalesItemEntity salesItemEntity;
+    @Column(nullable = false)
+    private Long itemId;
+    @Column(nullable = false)
     private String writer;
     private String password;
+    @Column(nullable = false)
     private String content;
     private String reply;
 }
