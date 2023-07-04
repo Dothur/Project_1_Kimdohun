@@ -43,6 +43,8 @@ public class CommentService {
     }
 
     public Page<ResponseCommentPageDto> searchAllComment(Long itemId, Integer page, Integer limit) {
+        if (!salesItemRepository.existsById(itemId))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         Pageable pageable = PageRequest.of(page, limit,
                 Sort.by("id")
         );
