@@ -6,6 +6,7 @@
 > 💡 여러분들이 많이 사용하고 있는 🥕당근마켓, 중고나라 등을 착안하여  여러분들만의 중고 제품 거래 플랫폼을 만들어보는 미니 프로젝트입니다.  
 > 사용자가 중고 물품을 자유롭게 올리고, 댓글을 통해 소통하며,  최종적으로 구매 제안에 대하여 수락할 수 있는 형태의 중고 거래 플랫폼의 백엔드 서비스입니다.
 
+<br>
 <details>
 <summary>📚 멋사마켓 ERD</summary>
 <div markdown="1">       
@@ -14,7 +15,6 @@
 
 </div>
 </details>
-<br>
 <details>
 <summary>📌 요구사항</summary>
 <div markdown="1">       
@@ -85,7 +85,10 @@
 </div>
 </details>
 
----
+<br>
+
+---  
+<br>
 
 ## ⏱️ _개발 기간_
 
@@ -108,7 +111,12 @@
    - [Comment](https://documenter.getpostman.com/view/28054685/2s93zE3fGz)
    - [Negotiation](https://documenter.getpostman.com/view/28054685/2s93zE3fGt#intro)
 
-## ☑️ _History_
+<br>
+
+---  
+<br>
+
+## 🔄 _History_
 
 ### 📅 _23.06.29_
 
@@ -181,3 +189,8 @@
    4. **_Negotiation 요청을 판매자가 수락 거절 에 따라 구매자가 확정 여부를 정할 수 있었던 부분_**
       - 이 부분에서 수락 일 때만 확정 할 수 있도록 요구사항에 적혀있지 않은거같았음
       - 판매자가 “수락” 을 하였을 때 만 구매자가 확정을 할 수 있도록 하였음
+
+<br>
+
+---  
+<br>
