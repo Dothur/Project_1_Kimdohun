@@ -1,7 +1,7 @@
 # MiniProject_Basic_KimDohun
-# 중고 제품 거래 플랫폼 ♻️ 멋사마켓 ♻️
+# _중고 제품 거래 플랫폼 ♻️ 멋사마켓 ♻️_
 
-## 💁🏻‍♂️ 미니 프로젝트 소개
+## **_💁🏻‍♂️ 미니 프로젝트 소개_**
 
 > 💡 여러분들이 많이 사용하고 있는 🥕당근마켓, 중고나라 등을 착안하여  여러분들만의 중고 제품 거래 플랫폼을 만들어보는 미니 프로젝트입니다.  
 > 사용자가 중고 물품을 자유롭게 올리고, 댓글을 통해 소통하며,  최종적으로 구매 제안에 대하여 수락할 수 있는 형태의 중고 거래 플랫폼의 백엔드 서비스입니다.
@@ -87,23 +87,97 @@
 
 ---
 
-## ⏱️ 개발 기간
+## ⏱️ _개발 기간_
 
-- 개발 날짜: 2023.06.29 ~ 2023.07.04
+- `개발 날짜: 2023.06.29 ~ 2023.07.04`
 
-## 🛠️ 개발 환경
+## 🛠️ _개발 환경_
 
-- IDE: IntelliJ IDEA Ultimate
-- Language : Java
-- Tech ( dependency )
-    - Spring Web
-    - Spring Boot DevTools
-    - Spring Data JPA
-    - Lombok
-    - SQLite
+- _IDE: IntelliJ IDEA Ultimate_
+- _Language : Java_
+- _Tech ( dependency )_
+    - _Spring Web_
+    - _Spring Boot DevTools_
+    - _Spring Data JPA_
+    - _Lombok_
+    - _SQLite_
 
-## 📮 API Documentations
+## 📮 _API Documentations_
 
    - [Items](https://documenter.getpostman.com/view/28054685/2s93zE3fGy)
    - [Comment](https://documenter.getpostman.com/view/28054685/2s93zE3fGz)
    - [Negotiation](https://documenter.getpostman.com/view/28054685/2s93zE3fGt#intro)
+
+## ☑️ _History_
+
+### 📅 _23.06.29_
+
+   1. _**프로젝트 세팅하기**_
+      - `.yaml` 파일 수정
+      - `build.gradle` 에 sqlite 추가
+
+
+   2. **_전체적인 items CRUD 기능 구현_**
+      - `POST /items => Create item`
+      - `GET /items?page={}&limit={} => Read All & Page 별로 검색`
+      - `GET /items/{id} => Read One`
+      - `PUT /items/{id} => Update Item`
+      - `PUT /items/{id}/image => Update(Add) Image`
+      - `DELETE /items/{id} => DELETE Item`
+      - Update & DELETE 할 때 password, writer 유저의 정보가 필요하도록 만들었음
+      - 일치하지않는지 판별하여 예외처리하였음.
+
+
+   3. **_dto 추가_**
+      - RequestItem Dto -> create, update 등을 위해 writer, password 가 담겨있음
+      - RequestUser Dto -> delete 시 사용
+      - Response Dto -> 요구조건에 맞게 응답으로 메세지 출력하도록
+      - ResponseItem Dto -> read One 등을 위한 응답 Dto
+      - ResponseItemPage Dto -> readAll Page 를 응답을 위해만든 Dto
+
+### 📅 _**23.07.03**_
+
+   1. **_Entity 파일에서 `@column(nullable = false)` 로 수정_**
+      - 제목, 설명, 최소 가격, 작성자
+   
+   
+   2. **_page 조회부분 코드 수정 & .yaml create 로 바꾸고 테스트_**
+      - defaultValue 추가
+      - page 는 0 부터 조회
+   
+   
+   3. **_Comment Page 구현 itemId 에 따라 조회할 메소드 정의_**
+      - `Page<CommentEntity> findAllByItemId(Long itemId, Pageable pageable);`
+   
+   
+   4. **_Comment Controller Service Dto 구현 ( CRUD 구현 )_**
+      - Request, Response 상황에 따라 다른 dto 구현
+      - Controller, Service 에서 Comment 의 CRUD 구현
+      - reply 부분에서는 물품 글 작성한 사람이 답글 달 경우에 그 패스워드를 가져와서 처리함
+      - 전체적으로 요구사항에 따라 writer, password 판별하여 예외처리 하였음
+   
+   
+### 📅 **_23.07.04_**
+
+   1. **_JpaRepository 을 이용해 메소드 추가_**
+      - 아이템 ID로 제안들을 조회하기 위한 메소드 추가
+      - 아이템 ID, 작성자, 비밀번호로 제안들을 조회하기 위한 메소드 추가
+      - 특정 제안 ID를 제외한 아이템 ID로 제안들을 조회하기 위한 메소드 추가
+   
+   
+   2. _**Negotiation 기능 구현을 위한 Dto**_
+      - 기본 Request 용 dto
+      - Page 조회 시 사용할 dto
+   
+   
+   3. **_Negotiation CRUD 기능 구현_**
+      - 구매 제안 등록 기능 구현
+      - 제안 조회 기능 구현
+      - 제안 수정 기능을 구현 및 상태 변경 기능 추가함
+            - 제안 상태 변경 기능을 판매자와 구매자에 따라 구현함
+      - 제안 삭제 기능 구현
+   
+   
+   4. **_Negotiation 요청을 판매자가 수락 거절 에 따라 구매자가 확정 여부를 정할 수 있었던 부분_**
+      - 이 부분에서 수락 일 때만 확정 할 수 있도록 요구사항에 적혀있지 않은거같았음
+      - 판매자가 “수락” 을 하였을 때 만 구매자가 확정을 할 수 있도록 하였음
