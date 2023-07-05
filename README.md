@@ -109,7 +109,7 @@
 
 ## 📮 _API Documentations_
 
-- [_**View API**_](https://documenter.getpostman.com/view/28054685/2s93zE4LhF)
+- [_**View API**_](https://documenter.getpostman.com/view/28054685/2s93zE4LhJ)
 
 <br>
 
