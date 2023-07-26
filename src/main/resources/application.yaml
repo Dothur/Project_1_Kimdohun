@@ -23,3 +23,5 @@ spring:
     resources:
       # 정적 파일 탐색 장소
       static-locations: file:media/,classpath:/static
+jwt:
+  secret: aaaabbbsdifqbvaesoioegwaaaabbbsdifqbvaesoioegwaaaabbbsdifqbvaesasdfqve
