@@ -2,7 +2,6 @@ package com.example.miniProject.controller;
 
 import com.example.miniProject.dto.*;
 import com.example.miniProject.dto.item.ItemDto;
-import com.example.miniProject.dto.RequestUserDto;
 import com.example.miniProject.dto.item.ResponseItemDto;
 import com.example.miniProject.dto.item.ResponseItemPageDto;
 import com.example.miniProject.service.ItemService;
@@ -64,19 +63,16 @@ public class ItemController {
     )
     public ResponseEntity<ResponseDto> updateImage(
             @PathVariable("id") Long id,
-            @RequestParam("image") MultipartFile multipartFile,
-            @RequestParam("writer") String writer,
-            @RequestParam("password") String password
+            @RequestParam("image") MultipartFile multipartFile
     ) {
-        return ResponseEntity.ok(service.updateImage(id, multipartFile, writer, password));
+        return ResponseEntity.ok(service.updateImage(id, multipartFile));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto> delete(
-            @PathVariable("id") Long id,
-            @RequestBody RequestUserDto dto
+            @PathVariable("id") Long id
     ) {
-        ResponseDto response = service.deleteItem(id, dto);
+        ResponseDto response = service.deleteItem(id);
         return ResponseEntity.ok(response);
     }
 }

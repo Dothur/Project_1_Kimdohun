@@ -1,18 +1,22 @@
 package com.example.miniProject.service;
 
+import com.example.miniProject.auth.entity.UserEntity;
+import com.example.miniProject.auth.jwt.JwtTokenUtils;
+import com.example.miniProject.auth.repository.UserRepository;
 import com.example.miniProject.dto.*;
 import com.example.miniProject.dto.item.ItemDto;
-import com.example.miniProject.dto.RequestUserDto;
 import com.example.miniProject.dto.item.ResponseItemDto;
 import com.example.miniProject.dto.item.ResponseItemPageDto;
 import com.example.miniProject.entity.SalesItemEntity;
 import com.example.miniProject.repository.SalesItemRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,13 +35,13 @@ public class ItemService {
 
     // Create Item
     public ResponseDto createItem(ItemDto dto) {
+        UserEntity userEntity = getUser();
         SalesItemEntity newItemEntity = new SalesItemEntity();
         newItemEntity.setTitle(dto.getTitle());
         newItemEntity.setDescription(dto.getDescription());
         newItemEntity.setMinPriceWanted(dto.getMinPriceWanted());
         newItemEntity.setStatus("판매중");
-        newItemEntity.setWriter(dto.getWriter());
-        newItemEntity.setPassword(dto.getPassword());
+        newItemEntity.setUser(userEntity);
         repository.save(newItemEntity);
 
         return new ResponseDto("등록이 완료되었습니다.");
@@ -62,38 +66,34 @@ public class ItemService {
 
     // Update Item
     public ResponseDto updateItem(Long id, ItemDto dto) {
+        UserEntity userEntity = getUser();
         Optional<SalesItemEntity> optionalSalesItemEntity = repository.findById(id);
         if (optionalSalesItemEntity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
         SalesItemEntity targetItemEntity = optionalSalesItemEntity.get();
-        if (!targetItemEntity.getPassword().equals(dto.getPassword())) {
+        if (!targetItemEntity.getUser().getId().equals(userEntity.getId()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-
-        if (!targetItemEntity.getWriter().equals(dto.getWriter())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
 
         targetItemEntity.setTitle(dto.getTitle());
         targetItemEntity.setDescription(dto.getDescription());
         targetItemEntity.setMinPriceWanted(dto.getMinPriceWanted());
-        targetItemEntity.setWriter(dto.getWriter());
-        targetItemEntity.setPassword(dto.getPassword());
         repository.save(targetItemEntity);
 
         return new ResponseDto("물품이 수정되었습니다.");
     }
 
     // Update Image
-    public ResponseDto updateImage(Long id, MultipartFile multipartFile, String writer, String password) {
+    public ResponseDto updateImage(Long id, MultipartFile multipartFile) {
+        UserEntity userEntity = getUser();
         // 사용자가 프로필 이미지를 업로드 한다.
         // 1. 유저 존재 확인
         SalesItemEntity targetItemEntity = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        validateWriterAndPassword(targetItemEntity, writer, password);
+        if (!targetItemEntity.getUser().getId().equals(userEntity.getId()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         // media/filename.png
         // media/<업로드 시각>.png
@@ -140,27 +140,39 @@ public class ItemService {
     }
 
     // Delete Item
-    public ResponseDto deleteItem(Long id, RequestUserDto dto) {
+    public ResponseDto deleteItem(Long id) {
+        UserEntity userEntity = getUser();
         Optional<SalesItemEntity> optionalSalesItemEntity = repository.findById(id);
         if (optionalSalesItemEntity.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         SalesItemEntity targetItemEntity = optionalSalesItemEntity.get();
-        if (!targetItemEntity.getPassword().equals(dto.getPassword())) {
+        if (!targetItemEntity.getUser().getId().equals(userEntity.getId()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
 
-        if (!targetItemEntity.getWriter().equals(dto.getWriter())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
         repository.deleteById(id);
 
         return new ResponseDto("물품을 삭제했습니다.");
     }
 
-    // password, writer 일치여부 판별
-    private void validateWriterAndPassword(SalesItemEntity itemEntity, String writer, String password) {
-        if (!itemEntity.getPassword().equals(password) || !itemEntity.getWriter().equals(writer)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    private final HttpServletRequest request;
+    private final JwtTokenUtils jwtTokenUtils;
+    private final UserRepository userRepository;
+
+    private UserEntity getUser() {
+        String token = extractTokenFromHeader(request.getHeader(HttpHeaders.AUTHORIZATION));
+        if (jwtTokenUtils.validate(token)) {
+            String username = jwtTokenUtils.parseClaims(token).getSubject();
+            return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다");
         }
+    }
+
+    private String extractTokenFromHeader(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.split(" ")[1];
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰의 형식이 잘못되었습니다");
     }
 }

@@ -1,5 +1,6 @@
 package com.example.miniProject.entity;
 
+import com.example.miniProject.auth.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,9 +11,15 @@ public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private Long itemId;
-    @Column(nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private SalesItemEntity item;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
     private String writer;
     private String password;
     @Column(nullable = false)

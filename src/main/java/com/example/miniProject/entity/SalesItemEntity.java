@@ -1,7 +1,10 @@
 package com.example.miniProject.entity;
 
+import com.example.miniProject.auth.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -24,9 +27,16 @@ public class SalesItemEntity {
 
     private String status;
 
-    @Column(nullable = false)
-    private String writer;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
-    @Column(nullable = false)
+    private String writer;
     private String password;
+
+    @OneToMany(mappedBy = "item")
+    private List<CommentEntity> comment;
+
+    @OneToMany(mappedBy = "item")
+    private List<NegotiationEntity> negotiation;
 }

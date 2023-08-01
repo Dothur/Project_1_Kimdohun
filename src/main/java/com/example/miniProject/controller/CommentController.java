@@ -1,6 +1,5 @@
 package com.example.miniProject.controller;
 
-import com.example.miniProject.dto.RequestUserDto;
 import com.example.miniProject.dto.comment.CommentDto;
 import com.example.miniProject.dto.ResponseDto;
 import com.example.miniProject.dto.comment.RequestReplyDto;
@@ -61,10 +60,9 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ResponseDto> deleteComment(
             @PathVariable("itemId") Long itemId,
-            @PathVariable("commentId") Long commentId,
-            @RequestBody RequestUserDto dto
+            @PathVariable("commentId") Long commentId
     ) {
-        ResponseDto response = commentService.deleteComment(itemId, commentId, dto);
+        ResponseDto response = commentService.deleteComment(itemId, commentId);
 
         return ResponseEntity.ok(response);
     }

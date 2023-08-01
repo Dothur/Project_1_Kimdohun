@@ -17,6 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller  // 로그인 페이지를 보여줄려고
 @RequestMapping("/users")
 public class UserController {
+    // 어떻게 사용자를 관리하는지는
+    // interface 기반으로 의존성 주입
+    private final UserDetailsManager manager;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserController(
+            UserDetailsManager manager,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.manager = manager;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     // 1. login 페이지로 온다.
     // 2. login 페이지에 아이디 비밀번호를 입력한다.
@@ -51,20 +63,7 @@ public class UserController {
         return "register-form";
     }
 
-    // 어떻게 사용자를 관리하는지는
-    // interface 기반으로 의존성 주입
-    private final UserDetailsManager manager;
-    private final PasswordEncoder passwordEncoder;
-
-
-    public UserController(
-            UserDetailsManager manager,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.manager = manager;
-        this.passwordEncoder = passwordEncoder;
-    }
-
+    // 회원가입
     @PostMapping("/register")
     public String registerPost(
             @RequestParam("username") String username,

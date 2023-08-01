@@ -3,6 +3,7 @@ package com.example.miniProject.auth.config;
 import com.example.miniProject.auth.jwt.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,25 +36,35 @@ public class WebSecurityConfig {
                                 // requestMatchers == 어떤 URL로 오는 요청에 대하여 설정하는지
                                 // permitAll() == 누가 요청해도 허가한다.
                                 .requestMatchers(
-                                        "/no-auth",
-                                        "/users/login",
                                         "/token/issue"
                                 )
                                 .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET, "/items"
+                                ).permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET, "/items/**"
+                                ).permitAll()
 
                                 .requestMatchers(
-                                        "/",
+                                        "/users/login",
                                         "/users/register"
                                 )
                                 .anonymous() // 인증이 되지 않은 사용자만 허가
 
                                 .requestMatchers(
-                                        "re-auth", // ex
                                         "/users/my-profile",
-                                        "/users/logout",
-                                        "/token/secured"
+                                        "/users/logout"
                                 )
                                 .authenticated() // 인증이 된 사용자만 허가
+                                .requestMatchers(HttpMethod.POST, "/items")
+                                .authenticated()
+                                .requestMatchers(HttpMethod.POST, "/items/**")
+                                .authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/items/**")
+                                .authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/items/**")
+                                .authenticated()
                 )
                 .sessionManagement(
                         sessionManagement -> sessionManagement
@@ -62,29 +73,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(
                         jwtTokenFilter,
                         AuthorizationFilter.class
-                )
-        ;
-//                // form 을 이용한 로그인 관련 설정
-//                .formLogin(
-//                        formLogin -> formLogin
-//                                // 로그인 하는 페이지 지정
-//                                .loginPage("/users/login")
-//                                // 성공시 이동하는 페이지
-//                                .defaultSuccessUrl("/users/my-profile")
-//                                // 실패시 이동하는 페이지
-//                                .failureUrl("/users/login?fail")
-//                                .permitAll()
-//                )
-//                .logout(
-//                        logout -> logout
-//                                // 로그아웃 요청을 보낼 url
-//                                // 어떤 UI에 로그아웃 기능을 연결하고 싶으면
-//                                // 해당 UI가 /users/logout 으로 POST 요청을 보내게끔
-//                                .logoutUrl("/users/logout")
-//                                // 성공시 이동하는 url
-//                                .logoutSuccessUrl("/users/login")
-//                )
-//        ;
+                );
         return http.build();
     }
 

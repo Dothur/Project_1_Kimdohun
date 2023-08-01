@@ -25,14 +25,14 @@ public class JpaUserDetailsManager implements UserDetailsManager {
             PasswordEncoder passwordEncoder
     ) {
         this.userRepository = userRepository;
-        // 임시 테스트 유저 등록
-        createUser(CustomUserDetails.builder()
-                .username("user")
-                .password(passwordEncoder.encode("asdf"))
-                .email("user@gmail.com")
-                .phone("010-1234-1234")
-                .address("seoul")
-                .build());
+//        // 임시 테스트 유저 등록
+//        createUser(CustomUserDetails.builder()
+//                .username("user")
+//                .password(passwordEncoder.encode("asdf"))
+//                .email("user@gmail.com")
+//                .phone("010-1234-1234")
+//                .address("seoul")
+//                .build());
     }
 
     @Override

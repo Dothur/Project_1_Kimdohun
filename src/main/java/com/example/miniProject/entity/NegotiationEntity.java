@@ -1,5 +1,6 @@
 package com.example.miniProject.entity;
 
+import com.example.miniProject.auth.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,13 +11,18 @@ public class NegotiationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private Long itemId;
+
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private SalesItemEntity item;
     @Column(nullable = false)
     private Integer suggestedPrice;
     private String status;
-    @Column(nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
     private String writer;
-    @Column(nullable = false)
     private String password;
 }

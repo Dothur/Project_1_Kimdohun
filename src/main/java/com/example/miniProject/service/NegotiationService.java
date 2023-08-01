@@ -1,6 +1,8 @@
 package com.example.miniProject.service;
 
-import com.example.miniProject.dto.RequestUserDto;
+import com.example.miniProject.auth.entity.UserEntity;
+import com.example.miniProject.auth.jwt.JwtTokenUtils;
+import com.example.miniProject.auth.repository.UserRepository;
 import com.example.miniProject.dto.ResponseDto;
 import com.example.miniProject.dto.negotiation.NegotiationDto;
 import com.example.miniProject.dto.negotiation.ResponseNegotiationPageDto;
@@ -8,12 +10,14 @@ import com.example.miniProject.entity.NegotiationEntity;
 import com.example.miniProject.entity.SalesItemEntity;
 import com.example.miniProject.repository.NegotiationRepository;
 import com.example.miniProject.repository.SalesItemRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,13 +33,14 @@ public class NegotiationService {
     private final NegotiationRepository negotiationRepository;
 
     public ResponseDto createNegotiation(Long itemId, NegotiationDto dto) {
-        if (!salesItemRepository.existsById(itemId))
+        UserEntity userEntity = getUser();
+        Optional<SalesItemEntity> salesItemEntity = salesItemRepository.findById(itemId);
+        if (salesItemEntity.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         NegotiationEntity negotiationEntity = new NegotiationEntity();
-        negotiationEntity.setWriter(dto.getWriter());
-        negotiationEntity.setPassword(dto.getPassword());
+        negotiationEntity.setUser(userEntity);
         negotiationEntity.setSuggestedPrice(dto.getSuggestedPrice());
-        negotiationEntity.setItemId(itemId);
+        negotiationEntity.setItem(salesItemEntity.get());
         negotiationEntity.setStatus("제안");
 
         negotiationRepository.save(negotiationEntity);
@@ -43,8 +48,9 @@ public class NegotiationService {
     }
 
     public Page<ResponseNegotiationPageDto> searchAllNegotiation(
-            Long itemId, String writer, String password, Integer page, Integer limit
+            Long itemId, Integer page, Integer limit
     ) {
+        UserEntity userEntity = getUser();
         Optional<SalesItemEntity> salesItemEntity = salesItemRepository.findById(itemId);
         if (salesItemEntity.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -54,11 +60,11 @@ public class NegotiationService {
         Page<NegotiationEntity> negotiationPage;
 
         // 물품의 주인이 조회
-        if (salesItem.getWriter().equals(writer) && salesItem.getPassword().equals(password)) {
+        if (salesItem.getUser().getId().equals(userEntity.getId())) {
             negotiationPage = negotiationRepository.findAllByItemId(itemId, pageable);
         } else {
-            negotiationPage = negotiationRepository.findAllByItemIdAndWriterAndPassword(
-                    itemId, writer, password, pageable);
+            negotiationPage = negotiationRepository.findAllByItem_IdAndUser_Id(
+                    itemId, userEntity.getId(), pageable);
         }
         if (negotiationPage.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -67,6 +73,7 @@ public class NegotiationService {
     }
 
     public ResponseDto updateNegotiation(Long itemId, Long proposalId, NegotiationDto dto) {
+        UserEntity userEntity = getUser();
         if (dto.getStatus() != null)
             return updateNegotiationChangeStatus(itemId, proposalId, dto);
         Optional<SalesItemEntity> salesItemEntity = salesItemRepository.findById(itemId);
@@ -77,7 +84,8 @@ public class NegotiationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         NegotiationEntity negotiationTargetEntity = negotiationEntity.get();
-        validateWriterAndPassword(negotiationTargetEntity, dto.getWriter(), dto.getPassword());
+        if (!negotiationTargetEntity.getUser().getId().equals(userEntity.getId()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         negotiationTargetEntity.setSuggestedPrice(dto.getSuggestedPrice());
         negotiationRepository.save(negotiationTargetEntity);
@@ -86,6 +94,7 @@ public class NegotiationService {
     }
 
     public ResponseDto updateNegotiationChangeStatus(Long itemId, Long proposalId, NegotiationDto dto) {
+        UserEntity userEntity = getUser();
         Optional<SalesItemEntity> salesItemEntity = salesItemRepository.findById(itemId);
         if (salesItemEntity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -97,9 +106,10 @@ public class NegotiationService {
         }
 
         SalesItemEntity salesItem = salesItemEntity.get();
+        NegotiationEntity negotiation = negotiationEntity.get();
 
         // 판매자의 경우
-        if (salesItem.getWriter().equals(dto.getWriter()) && salesItem.getPassword().equals(dto.getPassword())) {
+        if (salesItem.getUser().getId().equals(userEntity.getId())) {
             if (dto.getStatus().equals("수락") || dto.getStatus().equals("거절")) {
                 negotiationEntity.get().setStatus(dto.getStatus());
                 negotiationRepository.save(negotiationEntity.get());
@@ -108,7 +118,8 @@ public class NegotiationService {
         }
         // 구매자의 경우
         else {
-            validateWriterAndPassword(negotiationEntity.get(), dto.getWriter(), dto.getPassword());
+            if (!negotiation.getUser().getId().equals(userEntity.getId()))
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
             if (negotiationEntity.get().getStatus().equals("수락")){
                 if (dto.getStatus().equals("확정")) {
@@ -132,7 +143,8 @@ public class NegotiationService {
     }
 
 
-    public ResponseDto deleteNegotiation(Long itemId, Long proposalId, RequestUserDto dto) {
+    public ResponseDto deleteNegotiation(Long itemId, Long proposalId) {
+        UserEntity userEntity = getUser();
         Optional<SalesItemEntity> salesItemEntity = salesItemRepository.findById(itemId);
         if (salesItemEntity.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -141,16 +153,32 @@ public class NegotiationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         NegotiationEntity negotiationTargetEntity = negotiationEntity.get();
-        validateWriterAndPassword(negotiationTargetEntity, dto.getWriter(), dto.getPassword());
+        if (!negotiationTargetEntity.getUser().getId().equals(userEntity.getId()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         negotiationRepository.delete(negotiationTargetEntity);
         return new ResponseDto("제안을 삭제했습니다.");
     }
 
+    private final HttpServletRequest request;
+    private final JwtTokenUtils jwtTokenUtils;
+    private final UserRepository userRepository;
 
-    private void validateWriterAndPassword(NegotiationEntity negotiationEntity, String writer, String password) {
-        if (!negotiationEntity.getPassword().equals(password) || !negotiationEntity.getWriter().equals(writer)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    private UserEntity getUser() {
+        String token = extractTokenFromHeader(request.getHeader(HttpHeaders.AUTHORIZATION));
+        if (jwtTokenUtils.validate(token)) {
+            String username = jwtTokenUtils.parseClaims(token).getSubject();
+            return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다");
         }
+    }
+
+    private String extractTokenFromHeader(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.split(" ")[1];
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰의 형식이 잘못되었습니다");
     }
 }
