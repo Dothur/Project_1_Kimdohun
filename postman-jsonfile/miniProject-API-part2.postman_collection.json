@@ -1,22 +1,198 @@
 {
 	"info": {
-		"_postman_id": "19a18a7c-2d19-4076-aaa3-c17b5e6c346f",
-		"name": "miniProject-API",
+		"_postman_id": "fdad2f97-38d2-4510-89da-7ac920fb51ad",
+		"name": "miniProject-API-part2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "28054685"
 	},
 	"item": [
+		{
+			"name": "회원가입 & JWT 발급 API : Users",
+			"item": [
+				{
+					"name": "[회원 가입] : POST /users/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/register?username=dohun&password=1234&password-check=1234&email=dohun@gmail.com&phone=010-1234-1234&address=suwon",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"register"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "dohun"
+								},
+								{
+									"key": "password",
+									"value": "1234"
+								},
+								{
+									"key": "password-check",
+									"value": "1234"
+								},
+								{
+									"key": "email",
+									"value": "dohun@gmail.com"
+								},
+								{
+									"key": "phone",
+									"value": "010-1234-1234"
+								},
+								{
+									"key": "address",
+									"value": "suwon"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[회원 가입 테스트] : POST /users/register Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/register?username=duri&password=123&password-check=123&email=duri@gmail.com&phone=010-1234-1212&address=seoul",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"register"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "duri"
+								},
+								{
+									"key": "password",
+									"value": "123"
+								},
+								{
+									"key": "password-check",
+									"value": "123"
+								},
+								{
+									"key": "email",
+									"value": "duri@gmail.com"
+								},
+								{
+									"key": "phone",
+									"value": "010-1234-1212"
+								},
+								{
+									"key": "address",
+									"value": "seoul"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[JWT 발급] : POST /token/issue",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNzE2MiwiZXhwIjoxNjkwOTEwNzYyfQ.txfIkZGmzHk1fCEhGD03qepz1HJE4ccg35qpW-jvUGnko8NKTekoEF4rRN8wzYIbuTQh3TpCdMt5dJqFGEA-_Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"dohun\",\n    \"password\" : \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/token/issue",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"token",
+								"issue"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[JWT 토큰 로그인 성공 여부] : GET /users/my-profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/my-profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"my-profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "물품 관리 API : Items",
 			"item": [
 				{
 					"name": "[물품 등록] : POST /items",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNzE2MiwiZXhwIjoxNjkwOTEwNzYyfQ.txfIkZGmzHk1fCEhGD03qepz1HJE4ccg35qpW-jvUGnko8NKTekoEF4rRN8wzYIbuTQh3TpCdMt5dJqFGEA-_Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"중고 무접점 키보드 판매합니다.\",\n    \"description\": \"한성 gk868b-tico 50g 모델 입니다.\",\n    \"minPriceWanted\": 110000,\n    \"writer\": \"Kimdohun\",\n    \"password\": \"qwer1234\"\n}",
+							"raw": "{\n    \"title\": \"중고 무접점 키보드 판매합니다.\",\n    \"description\": \"한성 gk868b-tico 50g 모델 입니다.\",\n    \"minPriceWanted\": 110000\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -89,11 +265,21 @@
 				{
 					"name": "[물품 정보 수정] : PUT /items/{id}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNzE2MiwiZXhwIjoxNjkwOTEwNzYyfQ.txfIkZGmzHk1fCEhGD03qepz1HJE4ccg35qpW-jvUGnko8NKTekoEF4rRN8wzYIbuTQh3TpCdMt5dJqFGEA-_Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"중고 무접점 키보드 판매합니다.\",\n    \"description\": \"한성 gk868b-tico 50g 모델 입니다.\",\n    \"minPriceWanted\": 100000,\n    \"writer\": \"Kimdohun\",\n    \"password\": \"qwer1234\"\n}",
+							"raw": "{\n    \"title\": \"중고 무접점 키보드 판매합니다.\",\n    \"description\": \"한성 gk868b-tico 50g 모델 입니다.\",\n    \"minPriceWanted\": 100000\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -118,6 +304,16 @@
 				{
 					"name": "[물품 이미지 등록(수정)] : PUT /items/{id}/image",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNjczNCwiZXhwIjoxNjkwOTEwMzM0fQ.9mlj8daINlBExJDVfuVAfeDewba2cQ9jjuyM8d8OFtoDImyIa8h9819HpDf3A3JcQmEJdCiVQ6RTVTR7T2HD0w",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -126,17 +322,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/Users/dohun/Downloads/keyboard.jpeg"
-								},
-								{
-									"key": "writer",
-									"value": "Kimdohun",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "qwer1234",
-									"type": "text"
+									"src": "/Users/dohun/Pictures/Arthur/excited.jpg"
 								}
 							]
 						},
@@ -159,11 +345,21 @@
 				{
 					"name": "[물품 삭제] : DELETE /items/{id}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNjczNCwiZXhwIjoxNjkwOTEwMzM0fQ.9mlj8daINlBExJDVfuVAfeDewba2cQ9jjuyM8d8OFtoDImyIa8h9819HpDf3A3JcQmEJdCiVQ6RTVTR7T2HD0w",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\" : \"Kimdohun\",\n    \"password\" : \"qwer1234\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -193,11 +389,21 @@
 				{
 					"name": "[댓글 등록] : POST /items/{itemId}/comments",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Honggildong\",\n    \"password\": \"asdf1234\",\n    \"content\": \"할인 가능하신가요?\"\n}",
+							"raw": "{\n    \"content\": \"할인 가능하신가요?\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -254,11 +460,21 @@
 				{
 					"name": "[댓글 수정 (댓글 작성자 용)] : PUT /items/{itemId}/comments/{commentId}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Honggildong\",\n    \"password\": \"asdf1234\",\n    \"content\": \"90000원 거래 원합니다\"\n}",
+							"raw": "{\n    \"content\": \"90000원 거래 원합니다\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -285,11 +501,21 @@
 				{
 					"name": "[답글 추가 or 수정 (물품 등록자 용)] : PUT /items/{itemId}/comments/{commentId}/reply",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNzE2MiwiZXhwIjoxNjkwOTEwNzYyfQ.txfIkZGmzHk1fCEhGD03qepz1HJE4ccg35qpW-jvUGnko8NKTekoEF4rRN8wzYIbuTQh3TpCdMt5dJqFGEA-_Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\" : \"Kimdohun\",\n    \"password\" : \"qwer1234\",\n    \"reply\" : \"안됩니다. 10만원 어떠세요?\"\n}",
+							"raw": "{\n    \"reply\" : \"안됩니다. 10만원 어떠세요?\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -317,11 +543,21 @@
 				{
 					"name": "[댓글 삭제] : \bDELETE /items/{itemId}/comments/{commentId}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Honggildong\",\n    \"password\": \"asdf1234\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -353,11 +589,21 @@
 				{
 					"name": "[구매 제안 등록] : POST /items/{itemId}/proposals",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Honggildong\",\n    \"password\": \"asdf1234\",\n    \"suggestedPrice\": 95000\n}",
+							"raw": "{\n    \"suggestedPrice\": 95000\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -383,10 +629,20 @@
 				{
 					"name": "[구매 제안 조회 (구매 제안자 용)] : GET /items/{itemId}/proposals",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/items/1/proposals?writer=Honggildong&password=asdf1234&page=1",
+							"raw": "http://localhost:8080/items/1/proposals?page=1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -398,14 +654,6 @@
 								"proposals"
 							],
 							"query": [
-								{
-									"key": "writer",
-									"value": "Honggildong"
-								},
-								{
-									"key": "password",
-									"value": "asdf1234"
-								},
 								{
 									"key": "page",
 									"value": "1"
@@ -418,10 +666,20 @@
 				{
 					"name": "[구매 제안 조회 (물품 판매자 용)] : GET /items/{itemId}/proposals",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNzE2MiwiZXhwIjoxNjkwOTEwNzYyfQ.txfIkZGmzHk1fCEhGD03qepz1HJE4ccg35qpW-jvUGnko8NKTekoEF4rRN8wzYIbuTQh3TpCdMt5dJqFGEA-_Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/items/1/proposals?writer=Kimdohun&password=qwer1234&page=1",
+							"raw": "http://localhost:8080/items/1/proposals?page=1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -434,14 +692,6 @@
 							],
 							"query": [
 								{
-									"key": "writer",
-									"value": "Kimdohun"
-								},
-								{
-									"key": "password",
-									"value": "qwer1234"
-								},
-								{
 									"key": "page",
 									"value": "1"
 								}
@@ -453,11 +703,21 @@
 				{
 					"name": "[구매 제안 수정 (구매 제안자 용)] : PUT /items/{itemId}/proposals/{proposalId}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Honggildong\",\n    \"password\": \"asdf1234\",\n    \"suggestedPrice\": 100000\n}",
+							"raw": "{\n    \"suggestedPrice\": 100000\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -484,11 +744,21 @@
 				{
 					"name": "[구매 제안 수락 (물품 판매자 용)] : PUT /items/{itemId}/proposals/{proposalId}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNzE2MiwiZXhwIjoxNjkwOTEwNzYyfQ.txfIkZGmzHk1fCEhGD03qepz1HJE4ccg35qpW-jvUGnko8NKTekoEF4rRN8wzYIbuTQh3TpCdMt5dJqFGEA-_Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Kimdohun\",\n    \"password\": \"qwer1234\",\n    \"status\": \"수락\"\n}",
+							"raw": "{\n    \"status\": \"수락\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -515,11 +785,21 @@
 				{
 					"name": "[구매 제안 거절 (물품 판매자 용)] : PUT /items/{itemId}/proposals/{proposalId}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2h1biIsImlhdCI6MTY5MDkwNzE2MiwiZXhwIjoxNjkwOTEwNzYyfQ.txfIkZGmzHk1fCEhGD03qepz1HJE4ccg35qpW-jvUGnko8NKTekoEF4rRN8wzYIbuTQh3TpCdMt5dJqFGEA-_Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Kimdohun\",\n    \"password\": \"qwer1234\",\n    \"status\": \"거절\"\n}",
+							"raw": "{\n    \"status\": \"거절\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -546,11 +826,21 @@
 				{
 					"name": "[구매 제안 확정 (구매 제안자 용)] : PUT /items/{itemId}/proposals/{proposalId}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Honggildong\",\n    \"password\": \"asdf1234\",\n    \"status\" : \"확정\"\n}",
+							"raw": "{\n    \"status\" : \"확정\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -577,11 +867,21 @@
 				{
 					"name": "[구매 제안 삭제] : DELETE /items/{itemId}/proposals/{proposalId}",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkdXJpIiwiaWF0IjoxNjkwOTA3NTE0LCJleHAiOjE2OTA5MTExMTR9.aFcO_J0oOSkEvE_P1Si8k9iOUVOmbsv9Nktw6bCw32kbMMF8ZM9ucN8dow1ZPMP22RY9nDpNpDuUcOOwaMvWHw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"writer\": \"Honggildong\",\n    \"password\": \"asdf1234\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
