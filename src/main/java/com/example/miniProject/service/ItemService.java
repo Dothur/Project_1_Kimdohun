@@ -1,22 +1,19 @@
 package com.example.miniProject.service;
 
 import com.example.miniProject.auth.entity.UserEntity;
-import com.example.miniProject.auth.jwt.JwtTokenUtils;
-import com.example.miniProject.auth.repository.UserRepository;
+import com.example.miniProject.auth.service.AuthService;
 import com.example.miniProject.dto.*;
 import com.example.miniProject.dto.item.ItemDto;
 import com.example.miniProject.dto.item.ResponseItemDto;
 import com.example.miniProject.dto.item.ResponseItemPageDto;
 import com.example.miniProject.entity.SalesItemEntity;
 import com.example.miniProject.repository.SalesItemRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,10 +29,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ItemService {
     private final SalesItemRepository repository;
+    private final AuthService authService;
 
     // Create Item
     public ResponseDto createItem(ItemDto dto) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         SalesItemEntity newItemEntity = new SalesItemEntity();
         newItemEntity.setTitle(dto.getTitle());
         newItemEntity.setDescription(dto.getDescription());
@@ -66,7 +64,7 @@ public class ItemService {
 
     // Update Item
     public ResponseDto updateItem(Long id, ItemDto dto) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         Optional<SalesItemEntity> optionalSalesItemEntity = repository.findById(id);
         if (optionalSalesItemEntity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -86,7 +84,7 @@ public class ItemService {
 
     // Update Image
     public ResponseDto updateImage(Long id, MultipartFile multipartFile) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         // 사용자가 프로필 이미지를 업로드 한다.
         // 1. 유저 존재 확인
         SalesItemEntity targetItemEntity = repository.findById(id)
@@ -141,7 +139,7 @@ public class ItemService {
 
     // Delete Item
     public ResponseDto deleteItem(Long id) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         Optional<SalesItemEntity> optionalSalesItemEntity = repository.findById(id);
         if (optionalSalesItemEntity.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
@@ -152,27 +150,5 @@ public class ItemService {
         repository.deleteById(id);
 
         return new ResponseDto("물품을 삭제했습니다.");
-    }
-
-    private final HttpServletRequest request;
-    private final JwtTokenUtils jwtTokenUtils;
-    private final UserRepository userRepository;
-
-    private UserEntity getUser() {
-        String token = extractTokenFromHeader(request.getHeader(HttpHeaders.AUTHORIZATION));
-        if (jwtTokenUtils.validate(token)) {
-            String username = jwtTokenUtils.parseClaims(token).getSubject();
-            return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다");
-        }
-    }
-
-    private String extractTokenFromHeader(String authHeader) {
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.split(" ")[1];
-        }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰의 형식이 잘못되었습니다");
     }
 }

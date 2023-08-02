@@ -1,8 +1,7 @@
 package com.example.miniProject.service;
 
 import com.example.miniProject.auth.entity.UserEntity;
-import com.example.miniProject.auth.jwt.JwtTokenUtils;
-import com.example.miniProject.auth.repository.UserRepository;
+import com.example.miniProject.auth.service.AuthService;
 import com.example.miniProject.dto.comment.CommentDto;
 import com.example.miniProject.dto.ResponseDto;
 import com.example.miniProject.dto.comment.RequestReplyDto;
@@ -11,14 +10,12 @@ import com.example.miniProject.entity.CommentEntity;
 import com.example.miniProject.entity.SalesItemEntity;
 import com.example.miniProject.repository.CommentRepository;
 import com.example.miniProject.repository.SalesItemRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,9 +28,10 @@ import java.util.Optional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final SalesItemRepository salesItemRepository;
+    private final AuthService authService;
 
     public ResponseDto createComment(Long itemId, CommentDto dto) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         Optional<SalesItemEntity> optionalSalesItem = salesItemRepository.findById(itemId);
         if (optionalSalesItem.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -62,7 +60,7 @@ public class CommentService {
     }
 
     public ResponseDto updateComment(Long itemId, Long commentId, CommentDto dto) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         if (!salesItemRepository.existsById(itemId))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(commentId);
@@ -82,7 +80,7 @@ public class CommentService {
     }
 
     public ResponseDto createReply(Long itemId, Long commentId, RequestReplyDto dto) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         Optional<SalesItemEntity> salesItemEntity = salesItemRepository.findById(itemId);
         if (salesItemEntity.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
@@ -101,7 +99,7 @@ public class CommentService {
     }
 
     public ResponseDto deleteComment(Long itemId, Long commentId) {
-        UserEntity userEntity = getUser();
+        UserEntity userEntity = authService.getUser();
         if (!salesItemRepository.existsById(itemId))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(commentId);
@@ -115,27 +113,4 @@ public class CommentService {
         commentRepository.delete(targetEntity);
         return new ResponseDto("댓글을 삭제했습니다.");
     }
-
-    private final HttpServletRequest request;
-    private final JwtTokenUtils jwtTokenUtils;
-    private final UserRepository userRepository;
-
-    private UserEntity getUser() {
-        String token = extractTokenFromHeader(request.getHeader(HttpHeaders.AUTHORIZATION));
-        if (jwtTokenUtils.validate(token)) {
-            String username = jwtTokenUtils.parseClaims(token).getSubject();
-            return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다");
-        }
-    }
-
-    private String extractTokenFromHeader(String authHeader) {
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.split(" ")[1];
-        }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰의 형식이 잘못되었습니다");
-    }
-
 }
