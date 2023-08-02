@@ -6,8 +6,10 @@ import com.example.miniProject.auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+@Service
 public class AuthService {
     private final HttpServletRequest request;
     private final JwtTokenUtils jwtTokenUtils;
