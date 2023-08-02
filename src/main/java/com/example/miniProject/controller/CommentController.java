@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
 
+    // POST /items/{itemId}/comments
     @PostMapping
     public ResponseEntity<ResponseDto> createComment(
             @PathVariable("itemId") Long itemId,
@@ -27,6 +28,7 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
+    // GET /items/{itemId}/comments?page=()&limit=()
     @GetMapping
     public Page<ResponseCommentPageDto> searchAll(
             @PathVariable("itemId") Long itemId,
@@ -36,6 +38,7 @@ public class CommentController {
         return commentService.searchAllComment(itemId, page, pageNumber);
     }
 
+    // PUT /items/{itemId}/comments/{commentId}
     @PutMapping("/{commentId}")
     public ResponseEntity<ResponseDto> updateComment(
             @PathVariable("itemId") Long itemId,
@@ -46,6 +49,7 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
+    // PUT /items/{itemId}/comments/{commentId}/reply
     @PutMapping("/{commentId}/reply")
     public ResponseEntity<ResponseDto> createReply(
             @PathVariable("itemId") Long itemId,
@@ -57,6 +61,7 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
+    // DELETE /items/{itemId}/comments/{commentId}
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ResponseDto> deleteComment(
             @PathVariable("itemId") Long itemId,

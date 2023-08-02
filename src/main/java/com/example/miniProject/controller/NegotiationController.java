@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class NegotiationController {
     private final NegotiationService negotiationService;
 
+    // POST /items/{itemId}/proposals
     @PostMapping
     public ResponseEntity<ResponseDto> createNegotiation(
             @PathVariable("itemId") Long itemId,
@@ -26,6 +27,7 @@ public class NegotiationController {
         return ResponseEntity.ok(response);
     }
 
+    // GET /items/{itemId}/proposals?page=()&limit=()
     @GetMapping
     public Page<ResponseNegotiationPageDto> searchAllNegotiation(
             @PathVariable("itemId") Long itemId,
@@ -35,6 +37,7 @@ public class NegotiationController {
         return negotiationService.searchAllNegotiation(itemId, page, pageNumber);
     }
 
+    // PUT /items/{itemId}/proposals/{proposalId}
     @PutMapping("/{proposalId}")
     public ResponseEntity<ResponseDto> updateNegotiation(
             @PathVariable("itemId") Long itemId,
@@ -45,6 +48,7 @@ public class NegotiationController {
         return ResponseEntity.ok(response);
     }
 
+    // DELETE /items/{itemId}/proposals/{proposalId}
     @DeleteMapping("/{proposalId}")
     public ResponseEntity<ResponseDto> deleteNegotiation(
             @PathVariable("itemId") Long itemId,

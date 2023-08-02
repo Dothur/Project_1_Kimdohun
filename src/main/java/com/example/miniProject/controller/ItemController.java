@@ -31,6 +31,7 @@ public class ItemController {
         return ResponseEntity.ok(response);
     }
 
+    // GET /items/{id}
     @GetMapping("/{id}")
     public ResponseItemDto read(
             @PathVariable("id") Long id
@@ -47,6 +48,7 @@ public class ItemController {
         return service.searchAllItem(page, pageNumber);
     }
 
+    // PUT /items/{id}
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDto> update(
             @PathVariable("id") Long id,
@@ -57,6 +59,7 @@ public class ItemController {
         return ResponseEntity.ok(response);
     }
 
+    // PUT /items/{id}/image
     @PutMapping(
             value = "/{id}/image",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
@@ -68,6 +71,7 @@ public class ItemController {
         return ResponseEntity.ok(service.updateImage(id, multipartFile));
     }
 
+    // DELETE /items/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto> delete(
             @PathVariable("id") Long id

@@ -46,16 +46,4 @@ public class TokenController {
         response.setToken(jwtTokenUtils.generateToken(userDetails));
         return response;
     }
-
-//    // POST /token/secured
-//    // 인증이 필요한 URL (Token Test.. )
-//    @PostMapping("/secured")
-//    public String checkSecure() {
-//        log.info(SecurityContextHolder
-//                .getContext()
-//                .getAuthentication()
-//                .getName()
-//        );
-//        return "success";
-//    }
 }
